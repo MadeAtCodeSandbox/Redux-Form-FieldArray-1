@@ -18,40 +18,39 @@ class AFTOrderEntryForm extends Component {
     meta: PropTypes.object,
     title: PropTypes.string,
     getAllAccounts: PropTypes.func,
+    getSelectedOrdersCount: PropTypes.func,
     onSubmit: PropTypes.func
   };
-
   state = {
     orderEntries: [],
     selectAll: false,
     noOfSelectedOrders: 0,
-    options: {
-      accounts: []
-    }
+    accounts: [],
+    qtyType: [
+      { id: "fund", displayName: "Fund" },
+      { id: "cash", displayName: "Cash" }
+    ],
+    currency: { 0: [], 1: [], 2: [] },
+    cash: [
+      { id: "abc", displayName: "abc" },
+      { id: "def", displayName: "def" },
+      { id: "ghi", displayName: "ghi" }
+    ],
+    fund: [
+      { id: "fund1", displayName: "fund1" },
+      { id: "fund2", displayName: "fund2" }
+    ]
   };
 
-  componentDidMount() {
-    const { options } = this.state;
-    options.accounts = this.props.getAllAccounts();
-    this.setState({ options: options });
+  static getDerivedStateFromProps(props, state) {
+    console.log("~~~~~~~~~~~~ getDerivedStateFromProps ", props, state);
+    const stateEntity = state;
+    state.accounts = props.getAllAccounts();
+    state.orderEntries = props.orderEntries;
+    state.selectAll = props.selectAll;
+    state.noOfSelectedOrders = props.getSelectedOrdersCount(state.orderEntries);
+    return stateEntity;
   }
-
-  componentWillReceiveProps(nextProps, prevProps) {
-    this.setState({
-      orderEntries: nextProps.orderEntries,
-      selectAll: nextProps.selectAll
-    });
-    this.getSelectedOrdersCount(nextProps.orderEntries);
-  }
-
-  getSelectedOrdersCount = orderEntries => {
-    const selectedOrders = _.filter(orderEntries, o => {
-      return o.selected;
-    });
-    this.setState({
-      noOfSelectedOrders: selectedOrders.length
-    });
-  };
 
   onSelectAllFieldChange = (event, newValue, previousValue, name) => {
     const { orderEntries } = this.state;
@@ -59,14 +58,22 @@ class AFTOrderEntryForm extends Component {
       item.selected = newValue;
     });
     this.props.updateOrderEntriesState("orderEntries", orderEntries);
-    this.getSelectedOrdersCount(this.state.orderEntries);
+    const noOfSelectedOrders = this.props.getSelectedOrdersCount(
+      this.state.orderEntries
+    );
+    this.setState({ noOfSelectedOrders: noOfSelectedOrders });
   };
 
   addNewOrderEntry = () => {
-    const { orderEntries, selectAll } = this.state;
+    const { orderEntries, selectAll, currency } = this.state;
+    currency[orderEntries.length] = [];
     orderEntries.push({ selected: selectAll });
+    console.log("~~~~~~~ addNewOrderEntity ", orderEntries);
     this.props.updateOrderEntriesState("orderEntries", orderEntries);
-    this.getSelectedOrdersCount(this.state.orderEntries);
+    const noOfSelectedOrders = this.props.getSelectedOrdersCount(
+      this.state.orderEntries
+    );
+    this.setState({ noOfSelectedOrders: noOfSelectedOrders });
   };
 
   removeSelectedOrderEntry = () => {
@@ -76,7 +83,25 @@ class AFTOrderEntryForm extends Component {
     });
     this.props.updateOrderEntriesState("orderEntries", orderEntries);
     this.props.updateOrderEntriesState("selectAll", false);
-    this.getSelectedOrdersCount(this.state.orderEntries);
+    const noOfSelectedOrders = this.props.getSelectedOrdersCount(
+      this.state.orderEntries
+    );
+    this.setState({ noOfSelectedOrders: noOfSelectedOrders });
+  };
+
+  onQtyTypeSelectChange = (event, newValue, previousValue, name) => {
+    console.log(
+      ">>>> onQtyTypeSelectChange --->> ",
+      event,
+      newValue,
+      previousValue,
+      name
+    );
+    var numb = name.match(/\d/g);
+    numb = numb.join("");
+    const { currency } = this.state;
+    currency[numb] = this.state[newValue];
+    this.setState({ currency });
   };
 
   onSubmit = values => {
@@ -84,7 +109,6 @@ class AFTOrderEntryForm extends Component {
   };
   render() {
     const { handleSubmit, title, meta } = this.props;
-    console.log("~~~~~~~~~~~~ >>> Meta this.props.meta ", meta);
     return (
       <form onSubmit={handleSubmit(this.onSubmit)}>
         <div className="container">
@@ -106,13 +130,17 @@ class AFTOrderEntryForm extends Component {
                     value={this.state.selectAll}
                   />
                 </div>
-                <div style={{ order: 2, width: "45%" }}>Account</div>
-                <div style={{ order: 3, width: "45%" }}>LastName</div>
+                <div style={{ order: 2, width: "20%" }}>IsIn</div>
+                <div style={{ order: 3, width: "35%" }}>Qty.Type</div>
+                <div style={{ order: 4, width: "35%" }}>Currency</div>
               </div>
               <FieldArray
                 name="orderEntries"
                 component={AFTOrderEntryFormRow}
-                options={this.state.options}
+                accounts={this.state.accounts}
+                qtyType={this.state.qtyType}
+                currency={this.state.currency}
+                onQtyTypeSelectChange={this.onQtyTypeSelectChange}
               />
             </div>
           </div>
@@ -154,7 +182,6 @@ class AFTOrderEntryForm extends Component {
 
 const validate = values => {
   const errors = {};
-  console.log("Start::::~~~~~~~~~~~~ >>> validate <===> values ", values);
   if (!values.orderEntries || !values.orderEntries.length) {
     errors.orderEntries = { _error: "At least one order must be selected" };
   } else {
@@ -172,7 +199,6 @@ const validate = values => {
       errors.orderEntries = membersArrayErrors;
     }
   }
-  console.log("End::::~~~~~~~~~~~~ >>> validate <===> errors ", errors);
   return errors;
 };
 
@@ -184,7 +210,11 @@ AFTOrderEntryForm = reduxForm({
 const formAFTOrderEntry = formValueSelector("AFTOrderEntry");
 
 function mapStateToProps(state, ownProps) {
-  const orderEntries = [{ selected: true, accounts: "32214783" }];
+  const orderEntries = [
+    { selected: true, accounts: "32214783" },
+    { selected: true, accounts: "32214783" },
+    { selected: true, accounts: "32214783" }
+  ];
   const selectAll = false;
   const initialValues = {
     selectAll,
@@ -213,6 +243,12 @@ function mapDispatchToProps(dispatch, ownProps) {
       accounts.push({ id: 32214785, displayName: "Account 4" });
       accounts.push({ id: 32214786, displayName: "Account 5" });
       return accounts;
+    },
+    getSelectedOrdersCount(orderEntries) {
+      const selectedOrders = _.filter(orderEntries, o => {
+        return o.selected;
+      });
+      return selectedOrders.length;
     }
   };
 }
