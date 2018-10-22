@@ -108,7 +108,6 @@ class PeopleDashboard extends Component {
     } else if (page === pages.UPLOAD_SECTION) {
       return (
         <div className="d-flex flex-column">
-          <input type="file" id="file" name="file" />
           <div style={{ display: "flex", marginTop: "1rem" }}>
             <input
               type="text"
