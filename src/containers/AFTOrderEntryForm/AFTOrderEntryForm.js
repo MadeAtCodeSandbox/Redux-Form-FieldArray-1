@@ -260,7 +260,31 @@ function mapStateToProps(state) {
       selected: false,
       accounts: "Hdfc00123456789",
       qtyType: "U",
-      currency: "FundCCY"
+      currency: "FundCCY",
+      isin: "AB1234567890",
+      side: "S",
+      amount: "1235.1234",
+      clientreference: "AS"
+    },
+    {
+      selected: false,
+      accounts: "Axis00123456789",
+      qtyType: "C",
+      currency: "abc2",
+      isin: "AB1234567890",
+      side: "S",
+      amount: "1235.1234",
+      clientreference: "AS"
+    },
+    {
+      selected: false,
+      accounts: "ICICI00123456789",
+      qtyType: "C",
+      currency: "abc1",
+      isin: "",
+      side: "",
+      amount: "",
+      clientreference: ""
     }
   ];
   const selectAll = false;

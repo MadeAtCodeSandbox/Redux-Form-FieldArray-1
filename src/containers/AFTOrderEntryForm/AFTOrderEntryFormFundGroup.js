@@ -99,7 +99,10 @@ class AFTOrderEntryFormFundGroup extends Component {
         {fields.map((member, index) => {
           const row = fields.get(index);
           return (
-            <div className="d-flex flex-row justify-content-between">
+            <div
+              key={member}
+              className="d-flex flex-row justify-content-between"
+            >
               <div className="p-2">
                 <Field
                   name={`${member}.selected`}
