@@ -161,11 +161,24 @@ class AFTOrderEntryForm extends Component {
             validationEntries.amount = amountFieldValidation.message;
           }
         }
+        console.log(
+          "~~~ _.keys(validationEntries) ",
+          _.keys(validationEntries)
+        );
+        if (_.keys(validationEntries).length === 0) {
+          validationEntries = null;
+        }
       }
       errors.push(validationEntries);
     });
     console.log("~~~ validateOrderEntityRow ", errors, this.props);
-    return errors;
+    let valid = true;
+    _.forEach(errors, item => {
+      if (item) {
+        valid = false;
+      }
+    });
+    return valid ? undefined : errors;
   };
 
   onSubmit = values => {
@@ -246,11 +259,6 @@ function mapStateToProps(state) {
     {
       selected: false,
       accounts: "Hdfc00123456789",
-      qtyType: "U",
-      currency: "FundCCY"
-    },
-    {
-      selected: false,
       qtyType: "U",
       currency: "FundCCY"
     }

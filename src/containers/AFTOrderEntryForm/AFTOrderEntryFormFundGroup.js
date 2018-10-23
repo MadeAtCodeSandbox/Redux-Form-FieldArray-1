@@ -34,6 +34,7 @@ class AFTOrderEntryFormFundGroup extends Component {
         {meta.touched &&
           meta.error && <span className="error">{meta.error}</span>}
         {field.meta.touched &&
+          this.props.meta.error &&
           this.props.meta.error[rowNum] && (
             <span className="text-danger">
               {this.props.meta.error[rowNum][fieldName]}
@@ -57,6 +58,7 @@ class AFTOrderEntryFormFundGroup extends Component {
         {field.meta.touched &&
           field.meta.error && <span className="error">{field.meta.error}</span>}
         {field.meta.touched &&
+          this.props.meta.error &&
           this.props.meta.error[rowNum] && (
             <span className="text-danger">
               {this.props.meta.error[rowNum][fieldName]}
