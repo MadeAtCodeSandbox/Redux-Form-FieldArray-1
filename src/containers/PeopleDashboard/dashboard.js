@@ -124,6 +124,15 @@ class PeopleDashboard extends Component {
               Browse
             </button>
           </div>
+          <div className="mt-4 d-flex justify-content-end">
+            <a
+              href="https://www.w3schools.com/images/myw3schoolsimage.jpg"
+              download
+              className="btn btn-success"
+            >
+              Download Template
+            </a>
+          </div>
           <input
             type="file"
             style={{ display: "none" }}
@@ -141,6 +150,11 @@ class PeopleDashboard extends Component {
     }
   }
 
+  setViewChanges = pageName => {
+    console.log("~~~~~~~~~~~ setViewChanges ", pageName);
+    this.setState({ page: pageName });
+  };
+
   render() {
     return (
       <div className="container-fluid mt-5">
@@ -149,22 +163,24 @@ class PeopleDashboard extends Component {
             <div className="d-flex justify-content-between">
               <div>All People</div>
               <div>
-                <button
-                  className="btn btn-warning ml-2"
-                  onClick={() => {
-                    this.setState({ page: pages.UPLOAD_SECTION });
-                  }}
-                >
-                  Upload
-                </button>
-                <button
-                  className="btn btn-warning ml-2"
-                  onClick={() => {
-                    this.setState({ page: pages.VIEW_GRID });
-                  }}
-                >
-                  Grid
-                </button>
+                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                  <button
+                    className="btn btn-warning active"
+                    name="viewOptions"
+                    id="upload"
+                    onClick={event => this.setViewChanges(pages.UPLOAD_SECTION)}
+                  >
+                    Upload
+                  </button>
+                  <button
+                    className="btn btn-success"
+                    name="viewOptions"
+                    id="grid"
+                    onClick={event => this.setViewChanges(pages.VIEW_GRID)}
+                  >
+                    Grid
+                  </button>
+                </div>
               </div>
             </div>
           </div>

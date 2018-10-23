@@ -4,7 +4,8 @@ import { ApolloProvider } from "react-apollo";
 import { Provider } from "react-redux";
 import "bootstrap/dist/css/bootstrap.css";
 import store from "./store";
-import PeopleDashboard from "./containers/PeopleDashboard/dashboard";
+// import PeopleDashboard from "./containers/PeopleDashboard/dashboard";
+import AFTOrderEntryForm from "./containers/AFTOrderEntryForm/AFTOrderEntryForm";
 
 class App extends Component {
   constructor(...args) {
@@ -19,7 +20,7 @@ class App extends Component {
     return (
       <ApolloProvider client={this.client}>
         <Provider store={store}>
-          <PeopleDashboard />
+          <AFTOrderEntryForm title="Agent Fund Trading" />
         </Provider>
       </ApolloProvider>
     );
